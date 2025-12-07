@@ -83,8 +83,9 @@ def process_video_logic(
         return (int(landmark.x * width), int(landmark.y * height))
     
     # Define codec and create VideoWriter
-    # avc1 (H.264) is better for web browsers. Fallback to mp4v if needed.
-    fourcc = cv2.VideoWriter_fourcc(*'avc1')
+    # Define codec and create VideoWriter
+    # mp4v is more compatible with Linux servers (Render) than avc1
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     out = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
 
     # Trajectory history
@@ -358,6 +359,10 @@ async def process_video(
             draw_trajectory_finger,
             draw_guidelines
         )
+        
+        if not os.path.exists(output_path) or os.path.getsize(output_path) == 0:
+             raise Exception("Output video file was not created or is empty.")
+
     except Exception as e:
         # Cleanup input if failed
         await delete_file_delayed(input_path, delay=0)
