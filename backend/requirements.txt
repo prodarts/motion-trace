@@ -4,3 +4,4 @@ opencv-python-headless
 mediapipe
 python-multipart
 numpy
+imageio-ffmpeg
