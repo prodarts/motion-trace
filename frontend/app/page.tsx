@@ -45,7 +45,8 @@ export default function Home() {
       });
 
       if (!response.ok) {
-        throw new Error("Processing failed");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Processing failed");
       }
 
       const data = await response.json();
@@ -53,9 +54,9 @@ export default function Home() {
       setResultUrl(`${apiUrl}${data.download_url}`);
       setResultSlowUrl(`${apiUrl}${data.download_url_slow}`);
       setIsAnalysisComplete(true);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error processing video:", error);
-      alert("Failed to process video. Please try again.");
+      alert(`Error: ${error.message}`);
       setFile(null);
     } finally {
       setIsProcessing(false);

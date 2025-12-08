@@ -79,6 +79,14 @@ def process_video_logic(
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     fps = int(cap.get(cv2.CAP_PROP_FPS))
 
+    # Resize if too large (to prevent memory crash on Render Free Tier)
+    MAX_HEIGHT = 720
+    if height > MAX_HEIGHT:
+        scale = MAX_HEIGHT / height
+        width = int(width * scale)
+        height = MAX_HEIGHT
+        print(f"Resizing video to {width}x{height} for performance")
+
     def get_coords(landmark):
         return (int(landmark.x * width), int(landmark.y * height))
     
@@ -110,6 +118,9 @@ def process_video_logic(
                 break
 
             # Convert BGR to RGB
+            if height != frame.shape[0]: # Resize if needed
+                frame = cv2.resize(frame, (width, height))
+            
             image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             image.flags.writeable = False
 
