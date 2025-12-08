@@ -84,8 +84,9 @@ def process_video_logic(
     
     # Define codec and create VideoWriter
     # Define codec and create VideoWriter
-    # mp4v is more compatible with Linux servers (Render) than avc1
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    # avc1 (H.264) is required for browser playback (Chrome/Safari/iPhone)
+    # Since we are using opencv-python-headless, this should work on Render now.
+    fourcc = cv2.VideoWriter_fourcc(*'avc1')
     out = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
 
     # Trajectory history
