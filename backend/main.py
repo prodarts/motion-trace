@@ -83,10 +83,8 @@ def process_video_logic(
         return (int(landmark.x * width), int(landmark.y * height))
     
     # Define codec and create VideoWriter
-    # Define codec and create VideoWriter
-    # avc1 (H.264) is required for browser playback (Chrome/Safari/iPhone)
-    # Since we are using opencv-python-headless, this should work on Render now.
-    fourcc = cv2.VideoWriter_fourcc(*'avc1')
+    # mp4v is more compatible with Linux servers (Render) than avc1
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     out = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
 
     # Trajectory history
@@ -285,53 +283,20 @@ def process_video_logic(
     cap.release()
     out.release()
 
-    # Convert to H.264 using ffmpeg for browser compatibility
-    # mp4v (OpenCV default) -> libx264 (Browser compatible)
-    import imageio_ffmpeg
-    import subprocess
-
-    ffmpeg_path = imageio_ffmpeg.get_ffmpeg_exe()
-    temp_output_path = output_path.replace(".mp4", "_temp.mp4")
-    
-    # Rename original output to temp
-    if os.path.exists(output_path):
-        os.rename(output_path, temp_output_path)
-    
-    try:
-        # Convert Main Video
-        subprocess.call([
-            ffmpeg_path, 
-            '-i', temp_output_path, 
-            '-vcodec', 'libx264', 
-            '-pix_fmt', 'yuv420p', # Critical for browser support
-            '-y', # Overwrite output
-            output_path
-        ])
-    except Exception as e:
-        print(f"FFmpeg conversion failed: {e}")
-        # Fallback: rename temp back to output if conversion fails
-        if os.path.exists(temp_output_path):
-            os.rename(temp_output_path, output_path)
-    finally:
-        # Cleanup temp file
-        if os.path.exists(temp_output_path):
-            os.remove(temp_output_path)
-
-
     # Generate Slow Motion Version
-    # We will read the PROCESSED video (now H.264) and create a slow version
-    # Using ffmpeg is better for quality, but OpenCV is already set up.
-    # Let's stick to OpenCV for slow motion generation to keep it simple, 
-    # BUT we need to convert the result to H.264 again.
+    # We will read the processed video and write it out at a lower FPS
+    # Or simpler: Re-process? No, that's expensive.
+    # We can use ffmpeg if installed, but we only have opencv.
+    # OpenCV way: Read processed video, write with lower FPS.
     
     cap_processed = cv2.VideoCapture(output_path)
     output_slow_path = output_path.replace(".mp4", "_slow.mp4")
-    temp_slow_path = output_slow_path.replace(".mp4", "_temp.mp4")
     
+    # Slow motion factor (e.g., 0.5x speed)
+    # To make it play slower, we decrease the FPS in the writer
     slow_fps = fps / 2.0
     
-    # Write slow motion to temp file first
-    out_slow = cv2.VideoWriter(temp_slow_path, fourcc, slow_fps, (width, height))
+    out_slow = cv2.VideoWriter(output_slow_path, fourcc, slow_fps, (width, height))
     
     while cap_processed.isOpened():
         ret, frame = cap_processed.read()
@@ -341,24 +306,6 @@ def process_video_logic(
         
     cap_processed.release()
     out_slow.release()
-
-    # Convert Slow Motion to H.264
-    try:
-        subprocess.call([
-            ffmpeg_path, 
-            '-i', temp_slow_path, 
-            '-vcodec', 'libx264', 
-            '-pix_fmt', 'yuv420p', 
-            '-y', 
-            output_slow_path
-        ])
-    except Exception as e:
-        print(f"FFmpeg slow motion conversion failed: {e}")
-        if os.path.exists(temp_slow_path):
-            os.rename(temp_slow_path, output_slow_path)
-    finally:
-        if os.path.exists(temp_slow_path):
-            os.remove(temp_slow_path)
 
 @app.post("/process")
 async def process_video(

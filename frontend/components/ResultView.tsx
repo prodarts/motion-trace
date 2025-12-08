@@ -37,14 +37,16 @@ export default function ResultView({ videoUrl, videoSlowUrl, onReset, lang }: Re
             transition={{ duration: 0.5 }}
             className="w-full max-w-4xl mx-auto flex flex-col items-center"
         >
-            <div className="relative w-full aspect-video rounded-xl overflow-hidden shadow-2xl bg-black mb-8">
-                <video
-                    src={videoUrl}
-                    controls
-                    autoPlay
-                    loop
-                    className="w-full h-full object-contain"
-                />
+            <div className="relative w-full aspect-video rounded-xl overflow-hidden shadow-2xl bg-zinc-900 mb-8 flex flex-col items-center justify-center p-8 text-center border border-zinc-800">
+                <div className="text-6xl mb-4">✨</div>
+                <h3 className="text-2xl font-bold text-white mb-2">
+                    {lang === "en" ? "Analysis Complete!" : "分析完了！"}
+                </h3>
+                <p className="text-gray-400 max-w-md">
+                    {lang === "en"
+                        ? "Your video has been processed successfully. Please download it below to view the results."
+                        : "動画の処理が完了しました。以下のボタンからダウンロードして結果をご覧ください。"}
+                </p>
             </div>
 
             <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-4 mb-8 w-full max-w-2xl">
