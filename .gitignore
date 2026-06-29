@@ -1,0 +1,12 @@
+backend/uploads/
+backend/processed/
+backend/__pycache__/
+*.pyc
+
+frontend/.next/
+frontend/out/
+frontend/node_modules/
+
+.env
+.env.*
+!.env.example
