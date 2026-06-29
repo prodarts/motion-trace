@@ -37,8 +37,9 @@ export default function Home() {
     formData.append("draw_guidelines", String(settings.drawGuidelines));
 
     try {
-      // Use environment variable for production, fallback to localhost for dev
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const apiUrl =
+        process.env.NEXT_PUBLIC_API_URL ||
+        `http://${window.location.hostname || "localhost"}:8000`;
       const response = await fetch(`${apiUrl}/process`, {
         method: "POST",
         body: formData,

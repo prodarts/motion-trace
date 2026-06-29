@@ -33,10 +33,10 @@ cd motion-trace
 
 ```bash
 cd backend
-python -m venv .venv
+python3.11 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-uvicorn main:app --reload --port 8000
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 #### 3. フロントエンドを起動
@@ -46,7 +46,7 @@ uvicorn main:app --reload --port 8000
 ```bash
 cd frontend
 npm install
-npm run dev
+npm run dev:host
 ```
 
 #### 4. ブラウザで開く
@@ -55,9 +55,21 @@ npm run dev
 http://localhost:3000
 ```
 
+同じWi-Fi上のスマホから使う場合は、PCのローカルIPアドレスを調べて、スマホのブラウザで以下のように開きます。
+
+```text
+http://<PCのローカルIP>:3000
+```
+
+例:
+
+```text
+http://192.168.1.23:3000
+```
+
 ### 必要なもの
 
-- Python
+- Python 3.11推奨
 - Node.js / npm
 - 動画処理ができる程度のPC性能
 
@@ -95,10 +107,10 @@ cd motion-trace
 
 ```bash
 cd backend
-python -m venv .venv
+python3.11 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-uvicorn main:app --reload --port 8000
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 #### 3. Start the Frontend
@@ -108,7 +120,7 @@ Open another terminal and run:
 ```bash
 cd frontend
 npm install
-npm run dev
+npm run dev:host
 ```
 
 #### 4. Open in Browser
@@ -117,9 +129,21 @@ npm run dev
 http://localhost:3000
 ```
 
+To use it from a phone on the same Wi-Fi network, find your computer's local IP address and open:
+
+```text
+http://<your-computer-local-IP>:3000
+```
+
+Example:
+
+```text
+http://192.168.1.23:3000
+```
+
 ### Requirements
 
-- Python
+- Python 3.11 recommended
 - Node.js / npm
 - A computer with enough performance for video processing
 
